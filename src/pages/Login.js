@@ -1,11 +1,13 @@
 import React from "react";
 import { Button, Grid, Input, Text } from "../elements/index";
 import { getCookie, setCookie, deleteCookie } from "../shared/Cookie";
+import { useDispatch } from "react-redux";
+import {actionCreators as userActions} from '../redux/modules/user'; //as; 별명주는 것 
 
 
 const Login = (props) => {
 
-    console.log(getCookie('user_pwd'));
+    const dispatch = useDispatch();
     // const [id, setId] = React.useState('');
     // const [pwd, setPwd] = React.useState('');
 
@@ -18,6 +20,7 @@ const Login = (props) => {
     // }
 
     const login = () => {
+        dispatch(userActions.loginAction({user_name: 'perl'}));
         setCookie("user_id", 'perl', 3);
         setCookie("user_pwd", 'pppp', 3);
     }
