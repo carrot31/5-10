@@ -7,8 +7,6 @@ import { auth } from "../../shared/firebase";
 import firebase from "firebase/compat/app";
 import { useReducer } from "react";
 
-//병진님 화이팅
-
 //action
 // const LOG_IN = "LOG_IN";
 const LOG_OUT = "LOG_OUT";
