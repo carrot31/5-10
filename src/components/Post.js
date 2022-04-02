@@ -21,7 +21,7 @@ const Post = (props) =>{
                     <Image shape='rectangle' src={props.src}/>
                 </Grid>
                 <Grid padding='16px'>
-                    <Text bold>댓글 10개{props.comment_cnt}</Text>
+                    <Text bold>{props.comment_cnt}</Text>
                 </Grid>
             </Grid>
         </React.Fragment>
@@ -35,7 +35,8 @@ Post.defaultProps = {
     },
     img_url: 'https://ifh.cc/g/AOA4Wq.jpg',
     contents: '왕귀여운 토끼♥',
-    insert_dt: '2022-04-01'
+    insert_dt: '2022-04-01',
+    comment_cnt: '댓글 10개'
 };
 
 export default Post;

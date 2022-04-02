@@ -5,14 +5,16 @@ import { connectRouter } from "connected-react-router";
 
 import User from './modules/user';
 
-export const history = createBrowserHistory();
+export const history = createBrowserHistory(); //history객체 생성
+//history 리덕스에 넣어주는 이유? => 로그인 성공 여부에 따라 경로설정이 다르기때문에 리듀서 전 즉 redux thunk에 넣어줘야함 
 
 const rootReducer = combineReducers({
   user: User,
-  router: connectRouter(history), //history가 리덕스와 연결이 됌
+  router: connectRouter(history), //history가 라우터가 연결이 되어 다 저장됌 
 });
  
 const middlewares = [thunk.withExtraArgument({ history: history })]; //내가 사용할 미들웨어를 다 넣어줘라! //withExtracArgument; 인수를 더 넘겨줄게!
+//원래 thunk를 통해 middleware를 가능하게 해줌 history도 마찬가지 리듀서 전단계에서 사용 가능 
 
 // 지금이 어느 환경인 지 알려줘요. (개발환경, 프로덕션(배포)환경 ...)
 const env = process.env.NODE_ENV;

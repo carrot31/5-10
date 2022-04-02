@@ -23,11 +23,11 @@ const Image = (props) => {
         )
     }
 
-    return (
-        <React.Fragment>
+    // return (
+    //     <React.Fragment>
             
-        </React.Fragment>
-    )
+    //     </React.Fragment>
+    // )
 }
 
 Image.defaultProps = {
@@ -48,7 +48,7 @@ const ImageCircle = styled.div`
 `;
 
 const AspectOutter = styled.div`
-    width: 500px;
+    width: 100%;
     min-width: 250px;
 `;
 

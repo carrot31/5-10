@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 const Grid = (props) => {
-    // console.log(props)
+    
   const { is_flex, width, margin, padding, bg, children } = props;
+  // console.log(children)
 
   const styles = {
       is_flex: is_flex,
@@ -12,6 +13,7 @@ const Grid = (props) => {
       padding: padding,
       bg: bg,
   };
+  
   return (
     <React.Fragment>
       <GridBox {...styles}>{children}</GridBox>
@@ -35,7 +37,7 @@ const GridBox = styled.div`
   ${(props) => (props.padding ? `padding: ${props.padding};` : "")};
   ${(props) => (props.margin ? `margin: ${props.margin};` : "")}
   ${(props) => (props.bg ? `background-color: ${props.bg};` : "")}
-  ${(props) =>props.is_flex? `display: flex; align-items: center; justify-content: space-between; `: ""}
+  ${(props) => (props.is_flex? `display: flex; align-items: center; justify-content: space-between; `: "")}
 `;
 
 export default Grid;
