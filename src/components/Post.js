@@ -34,7 +34,7 @@ Post.defaultProps = {
         user_profile: 'https://ifh.cc/g/AOA4Wq.jpg',
     },
     img_url: 'https://ifh.cc/g/AOA4Wq.jpg',
-    contents: '왕귀여운 토끼♥',
+    contents: '왕귀여운 토끼',
     insert_dt: '2022-04-01',
     comment_cnt: '댓글 10개'
 };

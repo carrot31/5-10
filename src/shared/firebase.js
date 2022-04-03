@@ -23,5 +23,6 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const apiKey = firebaseConfig.apiKey; //apikey export 방법2 
+const firestore = firebase.firestore()
 
-export { auth, apiKey };
+export { auth, apiKey, firestore };

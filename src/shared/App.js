@@ -7,6 +7,8 @@ import PostList from '../pages/PostList';
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 import Header from "../components/Header";
+import PostWrite from "../pages/PostWrite";
+import PostDetail from '../pages/PostDetail';
 import {Grid, Button} from '../elements';
 
 import { useDispatch } from 'react-redux';
@@ -39,10 +41,12 @@ function App() {
           <Route path="/" exact component={PostList} />
           <Route path="/login" exact component={Login} />
           <Route path="/signup" exact component={Signup}/>
+          <Route path="/write" exact component={PostWrite}/>
+          <Route path="/detail" exact component={PostDetail}/>
         </ConnectedRouter >
       </Grid>
       <Permit>
-        <Button is_float text='+'></Button>
+         <Button is_float text="+" _onClick={() => {history.push('/write');}}></Button>
       </Permit>
     </React.Fragment>
   );

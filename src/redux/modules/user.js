@@ -142,12 +142,12 @@ const logoutFB = () =>{
 
 //immer; 어떤 A를 A`로 만들어 A`를 변화시킴 알아서 유지. 복사한 값을 막 써도 ok
 //Reducer
-export default handleActions(
-  {
-    [SET_USER]: (state, action) =>
+export default handleActions({
+    [SET_USER]: (state, action) => //state; 액션에 따라 실행할 함수들을 가진 객체, action; initialState
       produce(state, (draft) => { //state; 원본값을 준다(바꿔줄 놈), draft; 원본 복사값(어케 바꿀건가)
         //SET_USER; 유저정보 자체를 넣는것 //로그인해도 회원가입해도 유저정보를 넣어야해서
         // setCookie("is_login", "success");
+        // console.log(action)
         draft.user = action.payload.user;
         draft.is_login = true;
       }), 

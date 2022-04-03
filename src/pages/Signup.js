@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Grid, Text, Input, Button } from "../elements";
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
+import { emailCheck } from "../shared/common";
 
 
 const Signup = (props) => {
@@ -17,8 +18,11 @@ const Signup = (props) => {
   const signup = () => {
 
     if(id === '' || pwd === '' || user_name === ''){
+      return;  
+    }
+    if(!emailCheck(id)){
+      window.alert('이메일 형식이 맞지 않습니다!');
       return;
-      
     }
     if(pwd !== pwd_check){
       return;
@@ -55,7 +59,7 @@ const Signup = (props) => {
           />
         </Grid>
 
-        <Grid padding="16px 0px">
+        <Grid padding="16px 0p  x">
           <Input
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요."

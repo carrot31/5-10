@@ -51,7 +51,7 @@ const Header = (props) => {
           <Button text="로그인" _onClick={()=>{
             history.push('/login')
           }}></Button>
-          <Button text="회원가입" _onClick={()=>{
+          <Button text="회원가입"_onClick={()=>{
             history.push('/signup')
             console.log('헤어 회원가입 버튼')
           }}></Button>

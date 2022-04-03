@@ -4,12 +4,15 @@ import { createBrowserHistory } from "history";
 import { connectRouter } from "connected-react-router";
 
 import User from './modules/user';
+import Post from './modules/post';
+
 
 export const history = createBrowserHistory(); //history객체 생성
 //history 리덕스에 넣어주는 이유? => 로그인 성공 여부에 따라 경로설정이 다르기때문에 리듀서 전 즉 redux thunk에 넣어줘야함 
 
 const rootReducer = combineReducers({
   user: User,
+  post: Post, 
   router: connectRouter(history), //history가 라우터가 연결이 되어 다 저장됌 
 });
  
