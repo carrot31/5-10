@@ -15,7 +15,7 @@ const PostWrite = (props) => {
     console.log(contents)
 
     const addPost = () =>{
-      dispatch(postActions.addPostFB(contents));
+      dispatch(postActions.addPostFB(contents)); 
     }
 
     if(!is_login){
