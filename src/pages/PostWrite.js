@@ -7,6 +7,7 @@ import { actionCreators as postActions } from "../redux/modules/post";
 
 const PostWrite = (props) => {
     const is_login = useSelector((state)=> state.user.is_login);
+    const preview = useSelector((state)=>state.image.preview); 
     const {history} = props;
     const dispatch = useDispatch();
 
@@ -43,7 +44,7 @@ const PostWrite = (props) => {
             </Text>
           </Grid>
 
-          <Image shape="rectangle" />
+          <Image shape="rectangle" src={preview? preview:'https://ifh.cc/g/yY4z3M.png'}/> 
         </Grid>
 
         <Grid padding="16px">

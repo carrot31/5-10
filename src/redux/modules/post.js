@@ -2,6 +2,7 @@ import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 import { firestore } from "../../shared/firebase";
 import moment from 'moment';
+import {actionCreators as imageActions} from "./image";
 
 //Action
 const SET_POST = "SET_POST";
@@ -86,11 +87,13 @@ const addPostFB =(contents='') =>{
             contents: contents,
             insert_dt:  moment().format('YYYY-MM-DD hh:mm:ss') //왜 또 넣니? => 만들어지는 시점이 필요해서 
         };
-        // console.log({...user_info, ..._post}); //데이터 들어오나 확인해보자! 
+        // console.log({...user_info, ..._post}); //데이터 들어오나 확인해보자!     
+        const _image = getState().image.preview 
+        console.log(_image);
         // return; 
         
         postDB.add({...user_info, ..._post}).then((doc) => { //doc; 추가된 정보
-            let post = {user_info, ..._post, id: doc.id};
+            let post = {user_info, ..._post, id: doc.id}; 
             dispatch(addPost(post)) 
             history.replace('/')
         }).catch((err)=>{
@@ -99,6 +102,7 @@ const addPostFB =(contents='') =>{
 
     }
 }
+
 
 
 

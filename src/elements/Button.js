@@ -35,7 +35,7 @@ Button.defaultProps = {
 
 const ElButton = styled.button`
   width: 100%;
-  background-color: #212121;
+  background-color:#6A568B ;
   color: #ffffff;
   padding: 12px 0px;
   box-sizing: border-box;
@@ -47,7 +47,7 @@ const FloatButton = styled.button`
   height: 50px;
   border:none;
   border-radius: 50%;
-  background-color: gold;
+  background-color: #AF7AC5   ;
   color: #fff;
   box-sizing: border-box;
   font-size: 36px;

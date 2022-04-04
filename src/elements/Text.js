@@ -22,7 +22,7 @@ const Text = (props) =>{
 Text.defaultProps = {
     children: null,
     bold: false,
-    color: '#222831',
+    color: '#573988 ',
     size: '14px'
 }
 
