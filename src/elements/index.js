@@ -3,6 +3,7 @@ import Image from './Image';
 import Text from './Text';
 import Button from './Button';
 import Input from './Input';
+import Spinner from './Spinner';
 
 
-export {Grid, Image, Text, Input, Button};
+export {Grid, Image, Text, Input, Button, Spinner};

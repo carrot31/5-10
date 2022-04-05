@@ -14,7 +14,7 @@ const uploadImage = createAction(UPLOAD_IMAGE, (image_url) => ({ image_url }));
 const setPreview = createAction(SET_PREVIEW, (preview) =>({preview}));
 
 
-function uploadImageFB(image) {
+function uploadImageFB(image) {  //export 직접 해줘(안돼면;;)
   return function (dispatch, getState, {history}) {
     
     dispatch(uploading(true));
@@ -22,7 +22,7 @@ function uploadImageFB(image) {
     console.log(`images/${new Date().getTime()}_${image.name}`);
     const _upload = storage.ref(`images/${image.name}`).put(image);
 
-    //   업로드!
+    // 업로드!
     _upload.then((snapshot) => {
       console.log(snapshot);
 
@@ -31,7 +31,8 @@ function uploadImageFB(image) {
         console.log(url);
         dispatch(uploadImage(url));
       });
-    }).catch(err => {
+    }).catch((err) => {
+        console.log(err)
         dispatch(uploading(false));
     });
   };
