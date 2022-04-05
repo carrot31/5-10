@@ -12,7 +12,7 @@ const PostList = (props) => {
   const paging = useSelector((state) => state.post.paging);
 
   React.useEffect(() => {
-    if (post_list.length === 0) {
+    if (post_list.length === 0) { //리스트에 길이가 있으면 getPost를 하지 않는다. => 이미 있던 리덕스 맨 앞에 추가가 됌. 
       dispatch(postActions.getPostFB());
     }
   }, []);

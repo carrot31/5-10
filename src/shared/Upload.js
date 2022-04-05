@@ -11,13 +11,13 @@ const Upload = (props) => {
     const uploading = useSelector((state) => state.image.uploading);
 
     const selectFile = (e) =>{
-        console.log(e);
-        console.log(e.target);
-        console.log(e.target.files);
+        // console.log(e);
+        // console.log(e.target);
+        // console.log(e.target.files);
 
-        console.log(fileInput.current.files)
+        // console.log(fileInput.current.files)
 
-        const reader = new FileReader();
+        const reader = new FileReader(); //사진이 인풋에 들어갔을 때 가져올 것이라서 selectFile안에 써준다. 
         const file = fileInput.current.files[0];
 
         reader.readAsDataURL(file)  //어떤걸 넣고 싶은 지 

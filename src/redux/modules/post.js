@@ -11,7 +11,7 @@ const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const LOADING = "LOADING";
 
-//Action creator
+//Action creator   
 const setPost = createAction(SET_POST, (post_list, paging) => ({ post_list, paging }));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
 const editPost = createAction(EDIT_POST, (post_id, post) => ({post_id,  post,}));
@@ -46,6 +46,7 @@ const getPostFB = (start = null, size = 2) => {
     } 
 
     dispatch(loading(true)); 
+    
     const postDB = firestore.collection("post");
 
     let query = postDB.orderBy("insert_dt", "desc"); //시간 순서대로 최대 2개까지 가져오기! //다음걸 가져오는지 판별하기 위해 사이즈 + 1 
@@ -68,38 +69,30 @@ const getPostFB = (start = null, size = 2) => {
         size: size,
       } //=> 푸시 해주자! 
 
-
+       //post들의 키 값을 배열로 만들어줌 ex) {'comment_cnt','contents'...} => 내장함수 사용가능
       docs.forEach((doc) => {
-        let _post = doc.data();
-        let post = Object.keys(_post).reduce(
-          (acc, cur) => {
-            if (cur.indexOf("user_") !== -1) {
-              //-1이 아니다: 포함이 된다면 //user_info 로 묶어주자!
+        let _post = doc.data(); //모든 데이터 값
+
+        let post = Object.keys(_post).reduce( //모든 데이터의 키 값 
+          (acc, cur) => { //acc: 누적 키 값, cur: 현재 키 값
+            if (cur.indexOf("user_") !== -1) { //!== -1: 포함이 된다면 즉, user_가 포함된다면 
               return {
-                ...acc,
-                user_info: { ...acc.user_info, [cur]: _post[cur] },
+                ...acc, //누적된 딕셔너리
+                user_info: { ...acc.user_info, [cur]: _post[cur] }, //user_info 로 묶어주자! [cur] ;변수이기 때문데 []로 감싸줌!!!! 변수안에 담긴 키값 
               };
             }
-            return { ...acc, [cur]: _post[cur] }; //acc; 딕셔너리 그대로 들어옴,
+
+            return { ...acc, [cur]: _post[cur] }; 
           },
-          { id: doc.id, user_info: {} }
-        ); //더해지는 초기값 id 넣기! => id값은 현재 데이터에 없으므로!
+          { id: doc.id, user_info: {} } //초기값으로 현재 데이터에 없는 id값과 user_info 값 추가해주기!
+        ); 
         post_list.push(post);
       });
 
-      post_list.pop() //마지막 애는 지워주자! 
+      post_list.pop() //마지막 애는 지워주자!(무한스크롤) 
 
-      dispatch(setPost(post_list, paging));
+      dispatch(setPost(post_list, paging)); 
     });
-
-    return;
-    postDB.get().then((docs) => {
-      let post_list = []; //setPost로 넘길때 리스트로 넘어가므로 배열로 만들어주자!
-      docs.forEach((doc) => {
-        //doc: 각각 자료 한개
-
-        let _post = doc.data(); //데이터를 가져와서
-
         // let post = {
         //   //원하는 객체로 모양을 만들고
         //   id: doc.id,
@@ -115,26 +108,6 @@ const getPostFB = (start = null, size = 2) => {
         // };
 
         // post_list.push(post); //배열화 시켜서
-
-        //post들의 키 값을 배열로 만들어줌 ex) {'comment_cnt','contents'...} => 내장함수 사용가능
-        let post = Object.keys(_post).reduce(
-          (acc, cur) => {
-            if (cur.indexOf("user_") !== -1) {
-              //-1이 아니다: 포함이 된다면 //user_info 로 묶어주자!
-              return {
-                ...acc,
-                user_info: { ...acc.user_info, [cur]: _post[cur] },
-              };
-            }
-            return { ...acc, [cur]: _post[cur] }; //acc; 딕셔너리 그대로 들어옴,
-          },
-          { id: doc.id, user_info: {} }
-        ); //더해지는 초기값 id 넣기! => id값은 현재 데이터에 없으므로!
-        post_list.push(post);
-      });
-      // console.log(post_list);
-      dispatch(setPost(post_list)); //보내준다
-    });
   };
 };
 
@@ -156,7 +129,7 @@ const addPostFB = (contents = "") => {
     };
     // console.log({...user_info, ..._post}); //데이터 들어오나 확인해보자!
     const _image = getState().image.preview;
-    console.log(_image); //이미지 프리뷰 가져오기 (string)
+    console.log(getState()); //이미지 프리뷰 가져오기 (string)
     // return;
 
     //이미지 업로드하기//자신의 uid로 업로드 하기 때문에 겹치지 x
@@ -177,7 +150,7 @@ const addPostFB = (contents = "") => {
             .add({ ...user_info, ..._post, image_url: url })
             .then((doc) => {
               //doc; 추가된 정보
-              let post = { user_info, ..._post, id: doc.id, image_url: url };
+              let post = { user_info, ..._post, id: doc.id, image_url: url }; //형식 맞춰주기
               dispatch(addPost(post));
               history.replace("/");
 
@@ -266,7 +239,7 @@ export default handleActions(
 
     [ADD_POST]: (state, action) =>
       produce(state, (draft) => {
-        draft.list.unshift(action.payload.post);
+        draft.list.unshift(action.payload.post); //배열의 맨 앞에 붙이기 
       }),
     [EDIT_POST]: (state, action) =>
       produce(state, (draft) => {

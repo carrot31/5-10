@@ -13,7 +13,7 @@ const Header = (props) => {
 
   const _session_key = `firebase:authUser:${apiKey}:[DEFAULT]`;
   const is_session = sessionStorage.getItem(_session_key)? true:false;
-  console.log(is_session)
+  // console.log(is_session)
 
   if (is_login && is_session) {
     return (

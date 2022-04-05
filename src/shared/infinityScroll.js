@@ -28,9 +28,9 @@ const InfinityScroll = (props) =>{
         
     },300);
 
-    const handleScroll = React.useCallback(_handleScroll, [loading]); 
-    //메모이제이션(리렌더링 되지 않고 함수 실행) 
-    //[loading]될 때는 렌더링 => throttle이 저장한 정보 업데이트 
+    const handleScroll = React.useCallback(_handleScroll, [loading]); //나중에 체크체크!!! [loading]
+    //메모이제이션(리렌더링 되지 않고 함수 실행)
+    //[loading]될 때는 렌더링 => throttle이 저장한 정보 업데이트 (얘가 똑같은 값을 불러오지 않도록 하는건가????)
 
     React.useEffect(()=>{
 
@@ -47,6 +47,7 @@ const InfinityScroll = (props) =>{
 
         return ()=> window.removeEventListener('scroll', handleScroll) //clean up(unmount)
     },[is_next, loading]);
+
 
     return(
         <React.Fragment>
