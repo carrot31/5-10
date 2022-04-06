@@ -23,7 +23,7 @@ const Upload = (props) => {
         reader.readAsDataURL(file)  //어떤걸 넣고 싶은 지 
 
         reader.onloadend = () =>{ //읽기가 끝나면 발생하는 이벤트 핸들러  
-            console.log(reader.result); //result; 내용물 // 얘네를 이미지로 넣어주고 싶어! => PostWrite.js
+            // console.log(reader.result); //result; 내용물 // 얘네를 이미지로 넣어주고 싶어! => PostWrite.js
             dispatch(imageActions.setPreview(reader.result));
         }
     }
@@ -42,7 +42,6 @@ const Upload = (props) => {
     return (
         <React.Fragment>
             <input type="file" onChange={selectFile} ref={fileInput} disabled={uploading}/>
-            <Button _onClick={uploadFB} text='이미지 업로드 하기'></Button>
         </React.Fragment>
     )
 }

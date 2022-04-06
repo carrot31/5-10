@@ -1,9 +1,9 @@
 import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
-import { firestore } from "../../shared/firebase";
+import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
 import { actionCreators as imageActions } from "./image";
-import { storage } from "../../shared/firebase";
+
 
 //Action
 const SET_POST = "SET_POST";
@@ -21,7 +21,7 @@ const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 const initialState = {
   //리덕스가 사용할 initialState
   list: [], //post_list가 아닌 이유? 이미 state.post.list로 가져올 거기 때문에 post는 생략!
-  paging: { start: null, next: null, size: 2 }, //size: 몇 개 가져올거니?
+  paging: { start: null, next: null, size: 3 }, //size: 몇 개 가져올거니?
   is_loading: false, //지금 로딩 중이니?(가지고 오는 중이니?)
 };
 
@@ -35,11 +35,12 @@ const initialPost = {
 
 //Middleware
 
-const getPostFB = (start = null, size = 2) => {
+const getPostFB = (start = null, size = 3) => {
   return function (dispatch, getState, { history }) {
 
 
     let _paging = getState().post.paging; //모든 페이징 데이터
+    // console.log(_paging)
 
     if(_paging.start && !_paging.next){//만약 페이징에서 start는 있지만 next값이 없다면 아래 실행하지 말고 바로 return해! 
       return;
@@ -111,6 +112,35 @@ const getPostFB = (start = null, size = 2) => {
   };
 };
 
+const getOnePostFB = (id)=>{
+  return function (dispatch, getState, {history}){
+
+    const postDB = firestore.collection('post') //아이디 하나 가져오기 
+    postDB.doc(id).get().then(doc=>{
+        // console.log(doc)
+        // console.log(doc.data())
+
+        let _post = doc.data();
+
+        let post = Object.keys(_post).reduce( //모든 데이터의 키 값 
+      (acc, cur) => { //acc: 누적 키 값, cur: 현재 키 값
+        if (cur.indexOf("user_") !== -1) { //!== -1: 포함이 된다면 즉, user_가 포함된다면 
+          return {
+            ...acc, //누적된 딕셔너리
+            user_info: { ...acc.user_info, [cur]: _post[cur] }, //user_info 로 묶어주자! [cur] ;변수이기 때문데 []로 감싸줌!!!! 변수안에 담긴 키값 
+          };
+        }
+
+        return { ...acc, [cur]: _post[cur] }; 
+      },
+      { id: doc.id, user_info: {} } //초기값으로 현재 데이터에 없는 id값과 user_info 값 추가해주기!
+    ); 
+
+      dispatch(setPost([post])); //배열 안에 넣으려고 []
+    })
+  }
+}
+
 const addPostFB = (contents = "") => {
   return function (dispatch, getState, { history }) {
     const postDB = firestore.collection("post");
@@ -121,6 +151,7 @@ const addPostFB = (contents = "") => {
       user_id: _user.uid,
       user_profile: _user.user_profile,
     };
+    // console.log(_user.uid)
 
     const _post = {
       ...initialPost,
@@ -129,29 +160,29 @@ const addPostFB = (contents = "") => {
     };
     // console.log({...user_info, ..._post}); //데이터 들어오나 확인해보자!
     const _image = getState().image.preview;
-    console.log(getState()); //이미지 프리뷰 가져오기 (string)
+    // console.log(_image); //이미지 프리뷰 가져오기 (string)
     // return;
 
     //이미지 업로드하기//자신의 uid로 업로드 하기 때문에 겹치지 x
     const _upload = storage
-      .ref(`images/${user_info.user_id}_${new Date().getTime()}`)
+      .ref(`images/${user_info.user_id}_${new Date().getTime()}`) //언더바로 엮어줌 (다른 것도 가능)
       .putString(_image, "data_url");
 
-    _upload.then((snapshot) => {
+    _upload.then(snapshot => {
       snapshot.ref
         .getDownloadURL()
         .then((url) => {
-          console.log(url);
+          // console.log(url);
 
           return url;
         })
-        .then((url) => {
+        .then(url => {
           postDB
             .add({ ...user_info, ..._post, image_url: url })
             .then((doc) => {
               //doc; 추가된 정보
               let post = { user_info, ..._post, id: doc.id, image_url: url }; //형식 맞춰주기
-              dispatch(addPost(post));
+              dispatch(addPost(post)); 
               history.replace("/");
 
               dispatch(imageActions.setPreview(null)); //리덕스에 넣어둔 상태값(preview)를 null로 바꿔주자
@@ -233,7 +264,21 @@ export default handleActions(
     [SET_POST]: (state, action) =>
       produce(state, (draft) => {
         draft.list.push(...action.payload.post_list); //원래 리스트를 post_list로 갈아끼울거야~~
-        draft.paging = action.payload.paging;
+
+        //추가된 아이디를 같이 넣어서 넘어올 수 도 있기 때문에 중복제거를 해주자! 
+        draft.list = draft.list.reduce((acc,cur)=>{//포스트 하나의 아이디가 현재 가지고 있는 포스트의 아이디니? 
+            if(acc.findIndex(a => a.id == cur.id) === -1 ){ //중복됐어
+              return[...acc, cur];
+            }else{
+              acc[acc.findIndex(a => a.id == cur.id)] = cur; //최근걸로 덮어씌우자! 
+              return acc;
+            }
+        },[])
+
+        if(action.payload.paging){ //기본값 필요없음 
+          draft.paging = action.payload.paging;
+        }
+        
         draft.is_loading = false; 
       }),
 
@@ -262,6 +307,7 @@ const actionCreators = {
   getPostFB,
   addPostFB,
   editPostFB,
+  getOnePostFB,
 };
 
 export { actionCreators };

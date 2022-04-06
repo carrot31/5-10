@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, Grid, Input, Text } from "../elements/index";
-import { getCookie, setCookie, deleteCookie } from "../shared/Cookie";
 import { useDispatch } from "react-redux";
 import {actionCreators as userActions} from '../redux/modules/user'; //as; 별명주는 것 
 import { emailCheck } from "../shared/common";
@@ -59,7 +58,7 @@ const Login = (props) => {
                 />
             </Grid>
 
-            <Button text='로그인하기' width='100px' _onClick={() => {console.log('로그인 했어!'); login()}}></Button>
+            <Button bg= '#6A568B' text='로그인하기' width='100px' _onClick={() => {console.log('로그인 했어!'); login()}}></Button>
         </React.Fragment>
     )
 }

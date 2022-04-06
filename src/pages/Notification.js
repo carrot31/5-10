@@ -4,10 +4,10 @@ import Card from "../components/Card";
 
 const Notification = (props) => {
     let noti = [
-      { user_name: "mean0", post_id: "post1" },
-      { user_name: "mean0", post_id: "post2" },
-      { user_name: "mean0", post_id: "post3" },
-      { user_name: "mean0", post_id: "post4" },
+      { user_name: "mandu31", post_id: "post1" },
+      { user_name: "mandu31", post_id: "post2" },
+      { user_name: "mandu31", post_id: "post3" },
+      { user_name: "mandu31", post_id: "post4" },
     ];
 
     return (

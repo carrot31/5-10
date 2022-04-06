@@ -81,7 +81,7 @@ const Signup = (props) => {
           />
         </Grid>
 
-        <Button color='black' text="회원가입하기" onClick={signup()}></Button>
+        <Button bg= '#6A568B' color='black' text="회원가입하기" onClick={signup()}></Button>
       </Grid>
     </React.Fragment>
   );

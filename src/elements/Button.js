@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 export const Button = (props) => {
-  const { text, _onClick, is_float, children, margin, width, padding } = props;
+  const { text, _onClick, is_float, children, margin, width, padding, bg, color} = props;
 
   if (is_float) {
     return (
@@ -16,6 +16,8 @@ export const Button = (props) => {
     margin: margin,
     width: width,
     padding: padding,
+    bg: bg,
+    color: color,
   };
 
   return (
@@ -33,12 +35,15 @@ Button.defaultProps = {
   margin: false,
   width: '100%',
   padding: "12px 0px",
+  bg: false,
+  color: 'white',
+  
 };
 
 const ElButton = styled.button`
-  width: 100%;
-  background-color:#6A568B ;
-  color: #ffffff;
+  width: 100%; 
+  ${(props) => (props.bg ? `background-color: ${props.bg};` : "")}
+  color: ${(props) => props.color};
   padding: 12px 0px;
   box-sizing: border-box;
   border: none;

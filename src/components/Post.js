@@ -15,12 +15,13 @@ const Post = (props) => {
             <Text>{props.insert_dt}</Text> 
             {props.is_me && (
               <Button
+                bg= '#6A568B'
                 width="auto"
                 padding="200px"
                 margin="0px 10px 0px 0px"
                 text='수정'
                 _onClick={() => {
-                  history.push(`/write/${props.id}`);
+                  history.push(`/modify/${props.id}`);
                 }}
               />
             )}
@@ -30,7 +31,7 @@ const Post = (props) => {
           <Text>{props.contents}</Text>
         </Grid>
         <Grid>
-          <Image shape="rectangle" src={props.img_url} />
+          <Image shape="rectangle" src={props.image_url} />
         </Grid>
         <Grid padding="16px">
           <Text bold>댓글 {props.comment_cnt}개</Text>
@@ -49,6 +50,7 @@ Post.defaultProps = {
   contents: "왕귀여운 토끼",
   insert_dt: "2022-04-01",
   comment_cnt: "10",
+  is_me: false,
 };
 
 export default Post;

@@ -1,19 +1,21 @@
+import _ from "lodash";
 import React from "react";
 import styled from 'styled-components';
 
 
 const Text = (props) =>{
     
-    const {bold, color, size, children} = props;
+    const {bold, color, size, children, _onClick} = props;
     // console.log(children)
     const styles ={
         bold: bold, 
         color: color, 
-        size:size
+        size:size,
+        _onClick: _onClick
     };
 
     return(
-        <P {...styles}>
+        <P {...styles} onClick={_onClick}>
             {children}
         </P>
     )
@@ -22,8 +24,9 @@ const Text = (props) =>{
 Text.defaultProps = {
     children: null,
     bold: false,
-    color: '#573988 ',
-    size: '14px'
+    color: 'black',
+    size: '14px',
+    _onClick: ()=>{}
 }
 
 const P = styled.p`
