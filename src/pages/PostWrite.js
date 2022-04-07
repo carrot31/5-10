@@ -4,7 +4,7 @@ import Upload from "../shared/Upload";
 
 import { useSelector, useDispatch } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
-import image, { actionCreators as imageActions } from "../redux/modules/image";
+import { actionCreators as imageActions } from "../redux/modules/image";
 
 const PostWrite = (props) => {
   const { history } = props;
@@ -116,9 +116,9 @@ const PostWrite = (props) => {
   
       <Grid padding="16px">
         {is_edit ? (
-          <Button bg="#6A568B" text="게시글 수정" _onClick={editPost}></Button>
+          <Button text="게시글 수정" _onClick={editPost}></Button>
         ) : (
-          <Button bg="#6A568B" text="게시글 작성" _onClick={addPost}></Button>
+          <Button text="게시글 작성" _onClick={addPost}></Button>
         )}
       </Grid>
     </React.Fragment>

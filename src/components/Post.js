@@ -30,7 +30,7 @@ const Post = (props) => {
         <Grid is_flex width="auto" margin='0% 0% 0% 48%'>
           {props.is_me && (
             <Button
-              width="40px"  
+              width="40px"    
               padding="5px 0px"
               margin="0% 3px 0% 70%"
               text="수정"
