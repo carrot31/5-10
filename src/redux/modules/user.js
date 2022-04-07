@@ -1,8 +1,6 @@
 import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 
-import { setCookie, getCookie, deleteCookie } from "../../shared/Cookie";
-
 import { auth } from "../../shared/firebase";
 import firebase from "firebase/compat/app";
 import { useReducer } from "react";
@@ -25,18 +23,8 @@ const initialState = {
   is_login: false,
 };
 
-// const use_initial = {
-//   user_name: "mandu",
-// };
 
 //middleware actions ; 리덕스 내에서 history를 주기 위한 놈; 로그인 정보가 날라가지 않도록 해준다!
-// const loginAction = (user) => {
-//   return function (dispatch, getState, { history }) {
-//     console.log(history);
-//     dispatch(setUser(user));
-//     history.push("/");
-//   };
-// };
 
 const loginFB = (id, pwd) => {
   return function (dispatch, getState, { history }) {
@@ -61,9 +49,10 @@ const loginFB = (id, pwd) => {
           // ...
         })
         .catch((error) => {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log(errorCode, errorMessage);
+          // var errorCode = error.code;
+          // var errorMessage = error.message;
+          window.alert('로그인 혹은 비밀번호를 다시 확인해주세요!')
+          console.log('오류가 났어요!', error);
         });
     });
   };
@@ -74,8 +63,6 @@ const signupFB = (id, pwd, user_name) => {
     auth //firebase.js에서 이미 선언 해줌
       .createUserWithEmailAndPassword(id, pwd, user_name)// 가입 
       .then((user) => {
-        // Signed in
-        // var user = userCredential.user;
         console.log(user);
 
         auth.currentUser //가입 후 display_name없데이트 하기
@@ -97,14 +84,12 @@ const signupFB = (id, pwd, user_name) => {
           .catch((error) => {
             console.log(error);
           });
-        // ...
       })
       .catch((error) => {
         //오류가 난다면~
-        var errorCode = error.code;
-        var errorMessage = error.message; //firebase에 자체가입 규직이 있고 규칙을 어기면 회원가입 x
-        // ..
-        console.log(errorCode, errorMessage);
+        //firebase에 자체가입 규직이 있고 규칙을 어기면 회원가입 x
+        window.alert('규칙에 맞게 다시 입력해 주세요!');
+        console.log('오류가 났어요!', error);
       });
   };
 };
@@ -146,14 +131,11 @@ export default handleActions({
     [SET_USER]: (state, action) => //state; 액션에 따라 실행할 함수들을 가진 객체, action; initialState
       produce(state, (draft) => { //state; 원본값을 준다(바꿔줄 놈), draft; 원본 복사값(어케 바꿀건가)
         //SET_USER; 유저정보 자체를 넣는것 //로그인해도 회원가입해도 유저정보를 넣어야해서
-        // setCookie("is_login", "success");
-        // console.log(action)
         draft.user = action.payload.user;
         draft.is_login = true;
       }), 
     [LOG_OUT]: (state, action) =>
       produce(state, (draft) => {
-        // deleteCookie("is_login");
         draft.user = null;
         draft.is_login = false;
       }),

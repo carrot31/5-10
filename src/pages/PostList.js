@@ -10,6 +10,7 @@ const PostList = (props) => {
   const dispatch = useDispatch();
   const post_list = useSelector((state) => state.post.list);
   const user_info = useSelector((state) => state.user.user);
+
   const is_loading = useSelector((state) => state.post.is_loading);
   const paging = useSelector((state) => state.post.paging);
 
@@ -20,13 +21,15 @@ const PostList = (props) => {
       dispatch(postActions.getPostFB());
     }
 
-    
   }, []);
+
+  //
+
+ 
 
   return (
     <React.Fragment>
-      <Grid bg={"#EFF6FF"} padding="20px 0px">
-        {/* <Post/> */}
+      <Grid bg={"#F4EDE2"} padding="20px">
         <InfinityScroll
           callNext={() => {
             dispatch(postActions.getPostFB(paging.next));
@@ -45,7 +48,7 @@ const PostList = (props) => {
                     history.push(`/detail/${p.id}`);
                   }}
                 >
-                  <Post key={p.id} {...p} is_me />
+                  <Post key={p.id} {...p} is_me/>
                 </Grid>
               );
             } else {

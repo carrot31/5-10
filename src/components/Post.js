@@ -1,33 +1,53 @@
 import React from "react";
 import { Grid, Image, Text, Button } from "../elements";
 import { history } from "../redux/configureStore";
+import { useDispatch } from "react-redux";
+import { actionCreators as deleteActions } from "../redux/modules/post";
 
 const Post = (props) => {
-  // console.log(props);
+
+  const dispatch = useDispatch();
+
+  const onClick = (e) => {
+    e.stopPropagation();
+    history.push(`/modify/${props.id}`);
+  };
+  
+  const Delete = (e) =>{
+    e.stopPropagation();
+    dispatch(deleteActions.deletePostFB(props.id)) 
+  };
+
   return (
     <React.Fragment>
-      <Grid>
-        <Grid is_flex>
-          <Image shape="circle" src={props.src} />
+      <Grid padding='20px'>
+        <Grid is_flex width='auto'>
+          <Image shape="circle" src={props.src}/>
           <Text bold>{props.user_info.user_name}</Text>
-
-          <Grid is_flex width="auto">
-            <Text>{props.insert_dt}</Text> 
-            {props.is_me && (
-              <Button
-                bg= '#6A568B'
-                width="auto"
-                padding="200px"
-                margin="0px 10px 0px 0px"
-                text='수정'
-                _onClick={() => {
-                  history.push(`/modify/${props.id}`);
-                }}
-              />
-            )}
-          </Grid>
+          <Text>{props.insert_dt}</Text>
         </Grid>
-        <Grid padding="16px">
+           
+        <Grid is_flex width="auto" margin='0% 0% 0% 48%'>
+          {props.is_me && (
+            <Button
+              width="40px"  
+              padding="5px 0px"
+              margin="0% 3px 0% 70%"
+              text="수정"
+              _onClick={onClick}
+            />
+          )}
+          {props.is_me && (
+            <Button
+              width="40px"
+              padding="5px 0px"
+              text="제거"
+              _onClick={Delete}
+            />
+          )}
+
+        </Grid>
+        <Grid padding="16px" width='auto'>
           <Text>{props.contents}</Text>
         </Grid>
         <Grid>

@@ -23,7 +23,7 @@ const CommentList = (props) => {
   
   return (
     <React.Fragment>
-      <Grid padding="16px">
+      <Grid padding="16px"  >
         {comment_list[post_id].map(c =>{
           return <CommentItem key={c.id} {...c}/>
         })}
@@ -43,7 +43,7 @@ const CommentItem = (props) => {
 
     const {user_profile, user_name, user_id, post_id, contents, insert_dt} = props;
     return (
-        <Grid is_flex>
+        <Grid is_flex >
             <Grid is_flex width="auto">
                 <Image shape="circle"/>
                 <Text bold>{user_name}</Text>

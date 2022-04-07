@@ -16,15 +16,15 @@ const Image = (props) => {
     }
 
     if(shape === "rectangle"){
-        return (
+        return ( 
             <AspectOutter>
                 <AspectInner {...styles}></AspectInner>
             </AspectOutter>
         )
     }
 
-    return (
-        <React.Fragment>
+    return ( //padding-top 으로 반응형 이미지 비율을 맞추기 위해 외부div에 최대 넓이와 최소 넓이를 설정해준다! 
+        <React.Fragment> 
             <ImageDefault {...styles}></ImageDefault>
         </React.Fragment>
     )
@@ -42,9 +42,9 @@ const ImageCircle = styled.div`
     height: var(--size);
     border-radius: var(--size);
 
-    background-image:       url("${(props) => props.src}");
+    background-image: url("${(props) => props.src}");
     background-size: cover;
-    margin: 4px;
+    margin: 8px;
 `;
 
 const AspectOutter = styled.div`
@@ -54,13 +54,13 @@ const AspectOutter = styled.div`
 
 const AspectInner = styled.div`
     position: relative;
-    padding-top: 75%;
-    overflow: hidden; //
+    padding-top: 100%; //padding (세로/가로*100)% 
+    overflow: hidden; 
     background-image: url("${(props) => props.src}");
     background-size: cover;
 `;
 const ImageDefault = styled.div`
-  --size: ${(props) => props.size}px;
+  size: ${(props) => props.size}px;
   width: var(--size);
   height: var(--size);
   background-image: url("${(props) => props.src}");

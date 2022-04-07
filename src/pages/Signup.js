@@ -6,7 +6,6 @@ import { emailCheck } from "../shared/common";
 
 
 const Signup = (props) => {
-  // console.log(props)
   const dispatch = useDispatch();
 
   const [id, setId] = React.useState('');
@@ -23,11 +22,13 @@ const Signup = (props) => {
     if(!emailCheck(id)){
       window.alert('이메일 형식이 맞지 않습니다!');
       return;
+      
     }
     if(pwd !== pwd_check){
       return;
+      
     }
-    dispatch(userActions.signupFB(id, pwd, user_name))
+    dispatch(userActions.signupFB(id, pwd, user_name));
   }
 
   return (
@@ -81,7 +82,7 @@ const Signup = (props) => {
           />
         </Grid>
 
-        <Button bg= '#6A568B' color='black' text="회원가입하기" onClick={signup()}></Button>
+        <Button text="회원가입하기" _onClick={signup}></Button>
       </Grid>
     </React.Fragment>
   );

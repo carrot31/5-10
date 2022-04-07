@@ -9,30 +9,30 @@ const CommentWrite = (props) => {
 
     const[comment, setComment] = useState();
     const{post_id} = props;
+
+    const onChange = (e) =>{
+      setComment(e.target.value);
+    }
       
+    const write = ()=>{
+      dispatch(commentActions.addCommentFB(post_id, comment));
+      setComment(''); //입력된 텍스트 지우기
+    }
+
+
 
     return (
       <React.Fragment>
         <Grid padding="16px" is_flex>
-          <Input 
-          // value={comment} //굳이 value 쓴 이유; 작성 버튼 누르면 텍스트를 날려버려 주려고! 
-          placeholder="댓글 내용을 입력해주세요 :)" 
-          _onChange={(e)=>{
-            console.log('!!')
-            setComment(e.target.value)
-          }}
-          />
-          <Button
-          text='작성'
-          bg= '#6A568B'
-          width="30px" 
-          margin="0px 2px 0px 2px"
-          _onClick={()=>{
-            console.log(comment)
-            dispatch(commentActions.addCommentFB(post_id, comment))
-            setComment('')
-          }}
-          ></Button>
+        <Input
+          label='댓글'
+          placeholder="댓글 내용을 입력해주세요 :)"
+          _onChange={onChange}
+          value={comment}
+          onSubmit={write}
+          is_submit
+        />
+        <Button width="50px" margin='47px 0px 0px 3px'text='작성' _onClick={write}/>
         </Grid>
       </React.Fragment>
     );

@@ -3,7 +3,6 @@ import { produce } from "immer";
 import { firestore } from "../../shared/firebase";
 import "moment";
 import moment from "moment";
-import post from "./post";
 import firebase from "firebase/compat/app";
 import { actionCreators as postActions } from "../modules/post";
 
@@ -27,8 +26,6 @@ const addCommentFB = (post_id, contents) =>{
         const commentDB = firestore.collection('comment')
         const user_info = getState().user.user;
 
-       
-
         let comment = {
             post_id: post_id,
             user_id: user_info.uid,
@@ -39,8 +36,8 @@ const addCommentFB = (post_id, contents) =>{
         }
 
         commentDB.add(comment).then(doc=>{
-            const postDB = firestore.collection('post') //게시글의 댓글 수도 + 1
-            comment = {...comment, id:doc.id}
+            const postDB = firestore.collection('post'); //게시글의 댓글 수도 + 1
+            comment = {...comment, id:doc.id};
 
             const post = getState().post.list.find(l=>l.id===post_id)
 
@@ -55,7 +52,7 @@ const addCommentFB = (post_id, contents) =>{
                 //내가 가지고 있는 리덕스의 댓글 개수 + 1
                 if(post){
                     dispatch(
-                        postActions.editPost(post_id,{
+                        postActions.editPostFB(post_id,{
                             comment_cnt: parseInt(post.comment_cnt)+1, //포스트 하나에 대한 수정 
                         })
                     );
@@ -65,42 +62,42 @@ const addCommentFB = (post_id, contents) =>{
     }
 }
 
-const getCommentFB = (post_id) => {
-    return function(dispatch, getState, {history}){
-        
-        if(!post_id){
-            return;
-        }
-        const commentDB = firestore.collection('comment');
-
-        commentDB
-        .where('post_id', '===', post_id)
-        .orderBy('insert_dt', 'desc')
+const getCommentFB = (post_id = null) => {
+    return function (dispatch, getState, { history }) {
+      const commentDB = firestore.collection("comment");
+          
+          // post_id가 없으면 바로 리턴하기!
+      if(!post_id){
+          return;
+      }
+  
+      // where로 게시글 id가 같은 걸 찾고,
+      // orderBy로 정렬해줍니다.
+      commentDB
+        .where("post_id", "==", post_id)
+        .orderBy("insert_dt", "desc")
         .get()
-        .then(docs =>{
-            let list = [];
-
-            docs.forEach((doc)=>{
-                list.push({...doc.date(), id: doc.id});
-            })
-
-            dispatch(setComment(post_id, list))
-        }).catch(err=>{
-            // window.alert('댓글 정보를 가져올 수가 없네요!');
-            console.log(err)
-        })
-    }
-}
-
+        .then((docs) => {
+          let list = [];
+          docs.forEach((doc) => {
+            list.push({ ...doc.data(), id: doc.id });
+          });
+          //   가져온 데이터를 넣어주자!
+          dispatch(setComment(post_id, list));
+        }).catch(err => {
+            console.log("댓글 가져오기 실패!", post_id, err);
+        });
+    };
+  };
 
 export default handleActions(
   {
       [SET_COMMENT]: (state, action) => produce(state, (draft) => {
         draft.list[action.payload.post_id] = action.payload.comment_list; //방을 만들어서 post_id만 있다면 다 가져오도록 
       }),
-      [ADD_COMMENT]: (state, action) => produce(state, (draft)=> {
-        draft.list[action.payload.post_id].push(action.payload.comment);
-      }),
+      [ADD_COMMENT]: (state, action) => produce(state, (draft) => {
+        draft.list[action.payload.post_id].unshift(action.payload.comment);
+    }),
       [LOADING]: (state, action) => 
       produce(state, (draft) => {
         draft.is_loading = action.payload.is_loading;

@@ -4,17 +4,18 @@ import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
 import { actionCreators as imageActions } from "./image";
 
-
 //Action
 const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
+const DELETE_POST = "DELETE_POST";
 const LOADING = "LOADING";
 
-//Action creator   
-const setPost = createAction(SET_POST, (post_list, paging) => ({ post_list, paging }));
+//Action creator
+const setPost = createAction(SET_POST, (post_list, paging) => ({post_list,paging,}));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
-const editPost = createAction(EDIT_POST, (post_id, post) => ({post_id,  post,}));
+const editPost = createAction(EDIT_POST, (post_id, post) => ({post_id,post,}));
+const deletePost = createAction(DELETE_POST, (post_id) => ({ post_id }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 
 //initialStatef
@@ -37,109 +38,120 @@ const initialPost = {
 
 const getPostFB = (start = null, size = 3) => {
   return function (dispatch, getState, { history }) {
-
-
     let _paging = getState().post.paging; //모든 페이징 데이터
     // console.log(_paging)
 
-    if(_paging.start && !_paging.next){//만약 페이징에서 start는 있지만 next값이 없다면 아래 실행하지 말고 바로 return해! 
+    if (_paging.start && !_paging.next) {
+      //만약 페이징에서 start는 있지만 next값이 없다면 아래 실행하지 말고 바로 return해!
       return;
-    } 
-
-    dispatch(loading(true)); 
-    
-    const postDB = firestore.collection("post");
-
-    let query = postDB.orderBy("insert_dt", "desc"); //시간 순서대로 최대 2개까지 가져오기! //다음걸 가져오는지 판별하기 위해 사이즈 + 1 
-
-    //첫 번째로 뭔가 가지고 온다면 시작점 정보 x => 시작점 정보를 정해주고 싶을 땐?
-    if(start){ //스타트 정보가 있다면?
-      query = query.startAt(start) //쿼리에 넣어주자! 
     }
 
+    dispatch(loading(true));
+
+    const postDB = firestore.collection("post");
+
+    let query = postDB.orderBy("insert_dt", "desc"); //시간 순서대로 최대 2개까지 가져오기! //다음걸 가져오는지 판별하기 위해 사이즈 + 1
+
+    //첫 번째로 뭔가 가지고 온다면 시작점 정보 x => 시작점 정보를 정해주고 싶을 땐?
+    if (start) {
+      //스타트 정보가 있다면?
+      query = query.startAt(start); //쿼리에 넣어주자!
+    }
 
     query
-    .limit(size + 1)
-    .get()
-    .then((docs) => {
-      let post_list = []; //setPost로 넘길때 리스트로 넘어가므로 배열로 만들어주자!
+      .limit(size + 1)
+      .get()
+      .then((docs) => {
+        let post_list = []; //setPost로 넘길때 리스트로 넘어가므로 배열로 만들어주자!
 
-      let paging = { //next로 넘겨줄 것을 적어주자 => paging 정보 새로 구성
-        start: docs.docs[0], //맨 처음엔 도큐먼트들 안에서 제일 첫 번째걸 가져올거야
-        next: docs.docs.length === size + 1? docs.docs[docs.docs.length - 1] : null, //요청하는 개수만큼 가져온다면 size - 1 : 적다면 null(담거 없음)
-        size: size,
-      } //=> 푸시 해주자! 
+        let paging = {
+          //next로 넘겨줄 것을 적어주자 => paging 정보 새로 구성
+          start: docs.docs[0], //맨 처음엔 도큐먼트들 안에서 제일 첫 번째걸 가져올거야
+          next:
+            docs.docs.length === size + 1
+              ? docs.docs[docs.docs.length - 1]
+              : null, //요청하는 개수만큼 가져온다면 size - 1 : 적다면 null(담거 없음)
+          size: size,
+        }; //=> 푸시 해주자!
 
-       //post들의 키 값을 배열로 만들어줌 ex) {'comment_cnt','contents'...} => 내장함수 사용가능
-      docs.forEach((doc) => {
-        let _post = doc.data(); //모든 데이터 값
+        //post들의 키 값을 배열로 만들어줌 ex) {'comment_cnt','contents'...} => 내장함수 사용가능
+        docs.forEach((doc) => {
+          let _post = doc.data(); //모든 데이터 값
 
-        let post = Object.keys(_post).reduce( //모든 데이터의 키 값 
-          (acc, cur) => { //acc: 누적 키 값, cur: 현재 키 값
-            if (cur.indexOf("user_") !== -1) { //!== -1: 포함이 된다면 즉, user_가 포함된다면 
-              return {
-                ...acc, //누적된 딕셔너리
-                user_info: { ...acc.user_info, [cur]: _post[cur] }, //user_info 로 묶어주자! [cur] ;변수이기 때문데 []로 감싸줌!!!! 변수안에 담긴 키값 
-              };
-            }
+          let post = Object.keys(_post).reduce(
+            //모든 데이터의 키 값
+            (acc, cur) => {
+              //acc: 누적 키 값, cur: 현재 키 값
+              if (cur.indexOf("user_") !== -1) {
+                //!== -1: 포함이 된다면 즉, user_가 포함된다면
+                return {
+                  ...acc, //누적된 딕셔너리
+                  user_info: { ...acc.user_info, [cur]: _post[cur] }, //user_info 로 묶어주자! [cur] ;변수이기 때문데 []로 감싸줌!!!! 변수안에 담긴 키값
+                };
+              }
 
-            return { ...acc, [cur]: _post[cur] }; 
-          },
-          { id: doc.id, user_info: {} } //초기값으로 현재 데이터에 없는 id값과 user_info 값 추가해주기!
-        ); 
-        post_list.push(post);
+              return { ...acc, [cur]: _post[cur] };
+            },
+            { id: doc.id, user_info: {} } //초기값으로 현재 데이터에 없는 id값과 user_info 값 추가해주기!
+          );
+          post_list.push(post);
+        });
+
+        post_list.pop(); //마지막 애는 지워주자!(무한스크롤)
+
+        dispatch(setPost(post_list, paging));
       });
+    // let post = {
+    //   //원하는 객체로 모양을 만들고
+    //   id: doc.id,
+    //   user_info: {
+    //     user_name: _post.user_name,
+    //     user_profile: _post.user_profile,
+    //     user_id: _post.user_id,
+    //   },
+    //   contents: _post.contents,
+    //   image_url: _post.image_url,
+    //   comment_cnt: _post.comment_cnt,
+    //   imsert_dt: _post.insert_dt,
+    // };
 
-      post_list.pop() //마지막 애는 지워주자!(무한스크롤) 
-
-      dispatch(setPost(post_list, paging)); 
-    });
-        // let post = {
-        //   //원하는 객체로 모양을 만들고
-        //   id: doc.id,
-        //   user_info: {
-        //     user_name: _post.user_name,
-        //     user_profile: _post.user_profile,
-        //     user_id: _post.user_id,
-        //   },
-        //   contents: _post.contents,
-        //   image_url: _post.image_url,
-        //   comment_cnt: _post.comment_cnt,
-        //   imsert_dt: _post.insert_dt,
-        // };
-
-        // post_list.push(post); //배열화 시켜서
+    // post_list.push(post); //배열화 시켜서
   };
 };
 
-const getOnePostFB = (id)=>{
-  return function (dispatch, getState, {history}){
-
-    const postDB = firestore.collection('post') //아이디 하나 가져오기 
-    postDB.doc(id).get().then(doc=>{
+const getOnePostFB = (id) => {
+  return function (dispatch, getState, { history }) {
+    const postDB = firestore.collection("post"); //아이디 하나 가져오기
+    postDB
+      .doc(id)
+      .get()
+      .then((doc) => {
         // console.log(doc)
         // console.log(doc.data())
 
         let _post = doc.data();
 
-        let post = Object.keys(_post).reduce( //모든 데이터의 키 값 
-      (acc, cur) => { //acc: 누적 키 값, cur: 현재 키 값
-        if (cur.indexOf("user_") !== -1) { //!== -1: 포함이 된다면 즉, user_가 포함된다면 
-          return {
-            ...acc, //누적된 딕셔너리
-            user_info: { ...acc.user_info, [cur]: _post[cur] }, //user_info 로 묶어주자! [cur] ;변수이기 때문데 []로 감싸줌!!!! 변수안에 담긴 키값 
-          };
-        }
+        let post = Object.keys(_post).reduce(
+          //모든 데이터의 키 값
+          (acc, cur) => {
+            //acc: 누적 키 값, cur: 현재 키 값
+            if (cur.indexOf("user_") !== -1) {
+              //!== -1: 포함이 된다면 즉, user_가 포함된다면
+              return {
+                ...acc, //누적된 딕셔너리
+                user_info: { ...acc.user_info, [cur]: _post[cur] }, //user_info 로 묶어주자! [cur] ;변수이기 때문데 []로 감싸줌!!!! 변수안에 담긴 키값
+              };
+            }
 
-        return { ...acc, [cur]: _post[cur] }; 
-      },
-      { id: doc.id, user_info: {} } //초기값으로 현재 데이터에 없는 id값과 user_info 값 추가해주기!
-    ); 
+            return { ...acc, [cur]: _post[cur] };
+          },
+          { id: doc.id, user_info: {} } //초기값으로 현재 데이터에 없는 id값과 user_info 값 추가해주기!
+        );
 
-      dispatch(setPost([post])); //배열 안에 넣으려고 []
-    })
-  }
-}
+        dispatch(setPost([post])); //배열 안에 넣으려고 []
+      });
+  };
+};
 
 const addPostFB = (contents = "") => {
   return function (dispatch, getState, { history }) {
@@ -168,7 +180,7 @@ const addPostFB = (contents = "") => {
       .ref(`images/${user_info.user_id}_${new Date().getTime()}`) //언더바로 엮어줌 (다른 것도 가능)
       .putString(_image, "data_url");
 
-    _upload.then(snapshot => {
+    _upload.then((snapshot) => {
       snapshot.ref
         .getDownloadURL()
         .then((url) => {
@@ -176,13 +188,13 @@ const addPostFB = (contents = "") => {
 
           return url;
         })
-        .then(url => {
+        .then((url) => {
           postDB
             .add({ ...user_info, ..._post, image_url: url })
             .then((doc) => {
               //doc; 추가된 정보
               let post = { user_info, ..._post, id: doc.id, image_url: url }; //형식 맞춰주기
-              dispatch(addPost(post)); 
+              dispatch(addPost(post));
               history.replace("/");
 
               dispatch(imageActions.setPreview(null)); //리덕스에 넣어둔 상태값(preview)를 null로 바꿔주자
@@ -258,6 +270,22 @@ const editPostFB = (post_id = null, post = {}) => {
   };
 };
 
+const deletePostFB = (post_id = null) => {
+  return function (dispatch, getState, { history }) {
+    const postDB = firestore.collection("post");
+
+    postDB
+      .doc(post_id)
+      .delete()
+      .then(() => {
+        dispatch(deletePost(post_id));
+      })
+      .catch((error) => {
+        console.error("오류가 났습니다!", error);
+      }); //댓글도 없애주려면 댓글 삭제 기능 부터 만들어라ㅜ 
+  };
+};
+
 //Reducer
 export default handleActions(
   {
@@ -265,32 +293,40 @@ export default handleActions(
       produce(state, (draft) => {
         draft.list.push(...action.payload.post_list); //원래 리스트를 post_list로 갈아끼울거야~~
 
-        //추가된 아이디를 같이 넣어서 넘어올 수 도 있기 때문에 중복제거를 해주자! 
-        draft.list = draft.list.reduce((acc,cur)=>{//포스트 하나의 아이디가 현재 가지고 있는 포스트의 아이디니? 
-            if(acc.findIndex(a => a.id == cur.id) === -1 ){ //중복됐어
-              return[...acc, cur];
-            }else{
-              acc[acc.findIndex(a => a.id == cur.id)] = cur; //최근걸로 덮어씌우자! 
-              return acc;
-            }
-        },[])
+        //추가된 아이디를 같이 넣어서 넘어올 수 도 있기 때문에 중복제거를 해주자!
+        draft.list = draft.list.reduce((acc, cur) => {
+          //포스트 하나의 아이디가 현재 가지고 있는 포스트의 아이디니?
+          if (acc.findIndex((a) => a.id == cur.id) === -1) {
+            //중복됐어
+            return [...acc, cur];
+          } else {
+            acc[acc.findIndex((a) => a.id == cur.id)] = cur; //최근걸로 덮어씌우자!
+            return acc;
+          }
+        }, []);
 
-        if(action.payload.paging){ //기본값 필요없음 
+        if (action.payload.paging) {
+          //기본값 필요없음
           draft.paging = action.payload.paging;
         }
-        
-        draft.is_loading = false; 
+
+        draft.is_loading = false;
       }),
 
     [ADD_POST]: (state, action) =>
       produce(state, (draft) => {
-        draft.list.unshift(action.payload.post); //배열의 맨 앞에 붙이기 
+        draft.list.unshift(action.payload.post); //배열의 맨 앞에 붙이기
       }),
     [EDIT_POST]: (state, action) =>
       produce(state, (draft) => {
-        let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
+        let idx = draft.list.findIndex((p) => p.id === action.payload.post_id); //인덱스 반환 => 딱 위치만 찾는 함수
+        console.log(action)
 
-        draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
+        draft.list[idx] = { ...draft.list[idx], ...action.payload.post }; //갈아끼워줘라 
+      }),
+    [DELETE_POST]: (state, action) => 
+      produce(state, (draft) => { 
+        draft.list = draft.list.filter((p) => p.id !== action.payload.post_id); //배열을 반환  
       }),
     [LOADING]: (state, action) =>
       produce(state, (draft) => {
@@ -308,6 +344,7 @@ const actionCreators = {
   addPostFB,
   editPostFB,
   getOnePostFB,
+  deletePostFB,
 };
 
 export { actionCreators };
